@@ -31,7 +31,7 @@ data = dde.data.TimePDE(
     num_domain= 2540,
     num_boundary= 80,
     num_initial= 160,
-    num_test= 2540
+    num_test= 2540,
 )
 
 net = dde.nn.FNN([2] + [20]*3 + [1], "tanh", "Glorot normal")              # Syntex to define the net, 2 neuron + 3 hidden layers of 20 neurons + last layer with 1 neuron
@@ -45,3 +45,19 @@ plt.ylabel('t')
 plt.title('Domain points generated')
 plt.show()
 
+model = dde.Model(data, net)
+
+# Training with Adam first
+model.compile("adam", lr=1e-3)
+
+losshistory, train_state = model.train(iterations= 15000)
+
+# Training with L-BFGS for convergence
+
+model.compile("L-BFGS-B")
+
+checker = dde.callbacks.ModelCheckpoint(
+    "1D_Heat/model.ckpt", save_better_only=True, period=5000
+)
+
+losshistory, train_state = model.train(callbacks=[checker]) #, model_save_path='1D_Heat/1D_Heat')
