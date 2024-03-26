@@ -57,14 +57,16 @@ checker = dde.callbacks.ModelCheckpoint(
 losshistory, train_state = model.train(iterations= 15000, callbacks=[checker])
 
 # Training with L-BFGS for convergence
-
+dde.optimizers.config.set_LBFGS_options(maxiter=2000)
 model.compile("L-BFGS-B")
 
-checker = dde.callbacks.ModelCheckpoint(
-    "model.ckpt", period=1000
-)
+# Model saving option is not available for L-BFGS optimizer
 
-losshistory, train_state = model.train(callbacks=[checker]) #, model_save_path='1D_Heat/1D_Heat')
+#checker = dde.callbacks.ModelCheckpoint(
+#    "model.ckpt", period=1000
+#)
+
+losshistory, train_state = model.train() #, model_save_path='1D_Heat/1D_Heat')
 
 # To see the training and testing loss
 dde.saveplot(losshistory, train_state, issave= True, isplot= True)
